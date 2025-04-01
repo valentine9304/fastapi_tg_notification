@@ -26,6 +26,7 @@
 - [Docker](https://www.docker.com/get-started) и [Docker Compose](https://docs.docker.com/compose/install/)
 - Python 3.11
 - Токен Telegram-бота от [BotFather](https://t.me/BotFather)
+- Узнай Ваш Telegram user id обратитесь к боту @userinfobot
 
 ## Установка
 
