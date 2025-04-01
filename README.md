@@ -44,12 +44,16 @@ docker-compose up --build
 ## Pytest
 
 1. Устанавливаем виртуальное окружение, активируем его
+```
   python -m venv venv 
   source venv/Scripts/activate  ( WINDOWS)
   . venv/bin/activate (LINUX)
-2. Устаналиваем зависимоти pip install -r requirements.txt
-3. Запусаем тесты
+```
+3. Устаналиваем зависимоти pip install -r requirements.txt
+4. Запусаем тесты
+```
    pytest -v
+```
 
 ## Автор
 :trollface: Валентин :sunglasses:  
