@@ -39,8 +39,17 @@ docker-compose up --build
 5. Swagger развернут по адрессу [http://localhost:8000/docs](http://localhost:8000/docs)
 6. Для аутентификации в сервисе , получения JWT токена отправьте "username": admin - по endpoint'e /token
 7. Авторизуйтесь в правой вверхнем углу , вставьте Ваш токен
-
 8. Для отправки сообщения через Telegram бота - отправьте сообщение через метод /message по telegram user id
+
+## Pytest
+
+1. Устанавливаем виртуальное окружение, активируем его
+  python -m venv venv 
+  source venv/Scripts/activate  ( WINDOWS)
+  . venv/bin/activate (LINUX)
+2. Устаналиваем зависимоти pip install -r requirements.txt
+3. Запусаем тесты
+   pytest -v
 
 ## Автор
 :trollface: Валентин :sunglasses:  
