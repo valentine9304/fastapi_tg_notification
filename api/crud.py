@@ -6,7 +6,7 @@ from sqlalchemy import select, update
 from datetime import datetime, timedelta
 
 
-from api.db import producer
+from api.kafka import producer
 from api.models import Task, Message
 from api.schemas import TaskPost, TaskPatch, MessageGet, TokenRequest
 from config import KAFKA_TOPIC, JWT_SECRET_KEY, JWT_ALGORITHM
@@ -39,18 +39,24 @@ async def update_task(db: AsyncSession, task_id: int, task: TaskPatch):
 
 
 async def create_message(db: AsyncSession, message: MessageGet):
-    existing = await db.execute(select(Message).where(Message.notification_id == message.notification_id))
-    if existing.scalar_one_or_none():
-        raise HTTPException(status_code=409, detail="Message with this notification_id already exist")
+    sent_message = await db.execute(select(Message).where(Message.notification_id == message.notification_id and Message.status == "SENT"))
 
-    new_message = Message(
-        telegram_user_id=message.telegram_user_id,
-        notification_id=message.notification_id,
-        message_text=message.message_text
-    )
-    db.add(new_message)
-    await db.commit()
-    await db.refresh(new_message)
+    if sent_message.scalar_one_or_none():
+        raise HTTPException(status_code=409, detail="Message with this notification_id already exist and SENT")
+    
+    failed_message = await db.execute(select(Message).where(Message.notification_id == message.notification_id and Message.status in ("PENDING", "FAILED")))
+
+    if failed_message.scalar_one_or_none():
+        raise HTTPException(status_code=409, detail="Message with this notification_id already exist ,but not SENT. Trying to SEND again")
+    else:
+        new_message = Message(
+            telegram_user_id=message.telegram_user_id,
+            notification_id=message.notification_id,
+            message_text=message.message_text
+        )
+        db.add(new_message)
+        await db.commit()
+        await db.refresh(new_message)
 
     try:
         producer.begin_transaction()
@@ -92,3 +98,5 @@ async def get_token(request: TokenRequest):
     token = jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
 
     return {"access_token": token, "token_type": "bearer"}
+
+
