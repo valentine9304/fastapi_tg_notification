@@ -29,7 +29,7 @@ def create_kafka_clients():
 
     except:
         print(f"Ошибка подключения к Kafka, работаем без него.")
-        return None, None
+        return None
 
 
 producer = create_kafka_clients()
